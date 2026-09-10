@@ -1,0 +1,15 @@
+<svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="96" cy="96" r="96" fill="#2f5ef7"/>
+  
+  <!-- Stylized ESS initials -->
+  <g transform="translate(96, 96)">
+    <!-- Outer ring -->
+    <circle cx="0" cy="0" r="75" fill="none" stroke="white" stroke-width="3"/>
+    
+    <!-- ESS text -->
+    <text x="0" y="0" font-size="48" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="central" font-family="Inter, sans-serif">
+      ESS
+    </text>
+  </g>
+</svg>

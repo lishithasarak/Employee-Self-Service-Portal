@@ -1,0 +1,3 @@
+ALTER TABLE departments
+  ADD COLUMN is_active TINYINT(1) NOT NULL DEFAULT 1 AFTER description,
+  ADD COLUMN archived_at TIMESTAMP NULL DEFAULT NULL AFTER is_active;
