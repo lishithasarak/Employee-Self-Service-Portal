@@ -21,6 +21,11 @@ const logAudit = async ({
 
     return result;
   } catch (error) {
+    console.error('Audit log insert failed:', {
+      code: error?.code,
+      message: error?.message,
+    });
+
     if (error && ['ECONNREFUSED', 'ER_ACCESS_DENIED_ERROR', 'ER_BAD_DB_ERROR', 'ECONNRESET'].includes(error.code)) {
       return null;
     }
