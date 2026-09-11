@@ -3,8 +3,14 @@ import { apiGet, apiPut } from '../utils/api';
 
 const API_ORIGIN =
   import.meta.env.VITE_API_BASE_URL
-    ? import.meta.env.VITE_API_BASE_URL.replace('/api', '')
+    ? import.meta.env.VITE_API_BASE_URL.replace(/\/api\/?$/, '')
     : 'http://localhost:5000';
+
+const getPhotoUrl = (photo) => {
+  if (!photo) return 'https://via.placeholder.com/90';
+  if (/^(https?:|data:|blob:)/i.test(photo)) return photo;
+  return `${API_ORIGIN}${photo}`;
+};
 
 const ProfilePage = () => {
   const [profile, setProfile] = useState(null);
@@ -191,9 +197,7 @@ const ProfilePage = () => {
 
   const currentPhoto =
     photoPreview ||
-    (profile.profile_photo
-      ? `${API_ORIGIN}${profile.profile_photo}`
-      : 'https://via.placeholder.com/90');
+    getPhotoUrl(profile.profile_photo);
 
   return (
     <div className="page-section">

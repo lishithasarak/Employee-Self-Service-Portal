@@ -26,7 +26,11 @@ INSERT INTO leave_types (name, description, max_days_per_year, is_paid) VALUES
 INSERT INTO leave_balances (employee_id, leave_type_id, total_days, used_days, remaining_days, year) VALUES
 (1, 1, 12.00, 2.00, 10.00, 2026),
 (1, 2, 18.00, 3.50, 14.50, 2026),
-(1, 3, 10.00, 1.00, 9.00, 2026);
+(1, 3, 10.00, 1.00, 9.00, 2026),
+(2, 1, 12.00, 0.00, 12.00, 2026),
+(2, 2, 18.00, 0.00, 18.00, 2026),
+(2, 3, 10.00, 0.00, 10.00, 2026),
+(2, 4, 5.00, 0.00, 5.00, 2026);
 
 INSERT INTO attendance (employee_id, attendance_date, check_in, check_out, working_hours, status)
 VALUES

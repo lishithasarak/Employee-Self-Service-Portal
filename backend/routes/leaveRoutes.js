@@ -7,6 +7,13 @@ const { logAudit } = require('../utils/auditLogger');
 
 const router = express.Router();
 
+const defaultLeaveTypes = [
+  { id: 1, name: 'Casual Leave', description: 'Short-term personal leave', max_days_per_year: 12, is_paid: 1 },
+  { id: 2, name: 'Earned Leave', description: 'Annual earned leave', max_days_per_year: 18, is_paid: 1 },
+  { id: 3, name: 'Sick Leave', description: 'Medical leave', max_days_per_year: 10, is_paid: 1 },
+  { id: 4, name: 'Paid Leave', description: 'Company holiday leave', max_days_per_year: 5, is_paid: 1 },
+];
+
 const isValidDateString = (value) => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(`${value}T00:00:00Z`));
 
 // Get leave types
@@ -24,7 +31,7 @@ router.get('/types/all', authenticate, authorize('EMPLOYEE', 'MANAGER', 'ADMIN')
     );
 
     res.status(200).json({
-      leaveTypes: leaveTypes || [],
+      leaveTypes: leaveTypes?.length ? leaveTypes : defaultLeaveTypes,
     });
   } catch (error) {
     next(error);
