@@ -1,12 +1,9 @@
-CREATE DATABASE IF NOT EXISTS smart_ess CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE smart_ess;
-
 CREATE TABLE roles (
   id TINYINT UNSIGNED NOT NULL AUTO_INCREMENT,
   name VARCHAR(50) NOT NULL UNIQUE,
   description VARCHAR(255) DEFAULT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT NULL,
   PRIMARY KEY (id)
 );
 
@@ -18,7 +15,7 @@ CREATE TABLE departments (
   is_active TINYINT(1) NOT NULL DEFAULT 1,
   archived_at TIMESTAMP NULL DEFAULT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT NULL,
   PRIMARY KEY (id)
 );
 
@@ -31,7 +28,7 @@ CREATE TABLE users (
   is_active TINYINT(1) NOT NULL DEFAULT 1,
   last_login TIMESTAMP NULL DEFAULT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT NULL,
   PRIMARY KEY (id),
   KEY idx_users_role (role_id),
   KEY idx_users_email (email),
@@ -53,7 +50,7 @@ CREATE TABLE employees (
   manager_id INT UNSIGNED DEFAULT NULL,
   status ENUM('ACTIVE', 'INACTIVE', 'ON_LEAVE', 'TERMINATED') NOT NULL DEFAULT 'ACTIVE',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT NULL,
   PRIMARY KEY (id),
   UNIQUE KEY unique_user_employee (user_id),
   KEY idx_emp_department (department_id),
@@ -74,7 +71,7 @@ CREATE TABLE attendance (
   regularization_status ENUM('NONE', 'PENDING', 'APPROVED', 'REJECTED') NOT NULL DEFAULT 'NONE',
   notes VARCHAR(255) DEFAULT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT NULL,
   PRIMARY KEY (id),
   UNIQUE KEY unique_employee_date (employee_id, attendance_date),
   KEY idx_attendance_employee (employee_id),
@@ -89,7 +86,7 @@ CREATE TABLE leave_types (
   max_days_per_year SMALLINT UNSIGNED DEFAULT 0,
   is_paid TINYINT(1) NOT NULL DEFAULT 1,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT NULL,
   PRIMARY KEY (id)
 );
 
@@ -102,7 +99,7 @@ CREATE TABLE leave_balances (
   remaining_days DECIMAL(5,2) NOT NULL DEFAULT 0.00,
   year INT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT NULL,
   PRIMARY KEY (id),
   UNIQUE KEY unique_leave_balance (employee_id, leave_type_id, year),
   KEY idx_leave_balance_employee (employee_id),
@@ -122,7 +119,7 @@ CREATE TABLE leave_requests (
   rejection_reason VARCHAR(255) DEFAULT NULL,
   manager_id INT UNSIGNED DEFAULT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT NULL,
   PRIMARY KEY (id),
   KEY idx_leave_requests_employee (employee_id),
   KEY idx_leave_requests_status (status),
@@ -142,7 +139,7 @@ CREATE TABLE payslips (
   file_url VARCHAR(255) DEFAULT NULL,
   status ENUM('DRAFT', 'PUBLISHED') NOT NULL DEFAULT 'PUBLISHED',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT NULL,
   PRIMARY KEY (id),
   UNIQUE KEY unique_employee_month (employee_id, month, year),
   KEY idx_payslips_employee (employee_id),
@@ -158,7 +155,7 @@ CREATE TABLE documents (
   visibility ENUM('ALL', 'EMPLOYEE', 'MANAGER', 'ADMIN') NOT NULL DEFAULT 'ALL',
   is_active TINYINT(1) NOT NULL DEFAULT 1,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT NULL,
   PRIMARY KEY (id),
   KEY idx_documents_category (category),
   CONSTRAINT fk_documents_uploader FOREIGN KEY (uploaded_by) REFERENCES users(id)
@@ -174,7 +171,7 @@ CREATE TABLE support_tickets (
   status ENUM('OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED') NOT NULL DEFAULT 'OPEN',
   assigned_to INT UNSIGNED DEFAULT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT NULL,
   PRIMARY KEY (id),
   KEY idx_tickets_employee (employee_id),
   KEY idx_tickets_status (status),
@@ -207,7 +204,7 @@ CREATE TABLE reimbursements (
   comments VARCHAR(255) DEFAULT NULL,
   reviewed_by INT UNSIGNED DEFAULT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT NULL,
   PRIMARY KEY (id),
   KEY idx_reimbursements_employee (employee_id),
   KEY idx_reimbursements_status (status),
@@ -251,9 +248,7 @@ CREATE TABLE password_reset_tokens (
   used_at DATETIME DEFAULT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
-  KEY idx_password_reset_user (user_id),
-  KEY idx_password_reset_hash (token_hash),
-  CONSTRAINT fk_password_reset_user FOREIGN KEY (user_id) REFERENCES users(id)
+  KEY idx_password_reset_user (user_id)
 );
 
 INSERT INTO roles (name, description) VALUES

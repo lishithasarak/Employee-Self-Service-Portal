@@ -35,6 +35,8 @@ const departmentRoutes = require('./routes/departmentRoutes');
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 app.use(securityHeaders);
 app.use(requestLogger);
 
@@ -48,7 +50,7 @@ const configuredCorsOrigins = String(process.env.CORS_ORIGIN || '')
   .filter(Boolean);
 
 const allowedOrigins = configuredCorsOrigins.length > 0
-  ? configuredCorsOrigins.concat('http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175', 'http://localhost:5176')
+  ? configuredCorsOrigins
   : [
       'http://localhost:5173',
       'http://localhost:5174',
@@ -56,17 +58,16 @@ const allowedOrigins = configuredCorsOrigins.length > 0
       'http://localhost:5176',
     ];
 
-app.use(
-  cors({
-    origin: allowedOrigins,
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    maxAge: 86400,
-  })
-);
- 
-app.options('*', cors());
+const corsOptions = {
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  maxAge: 86400,
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // ============================================================
 // BODY PARSERS
@@ -89,12 +90,9 @@ app.use(
 // SERVE UPLOADED FILES
 // ============================================================
 
-app.use(
-  '/uploads',
-  express.static(
-    path.join(__dirname, 'uploads')
-  )
-);
+if (process.env.NODE_ENV !== 'production') {
+  app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+}
 
 // ============================================================
 // HEALTH CHECK

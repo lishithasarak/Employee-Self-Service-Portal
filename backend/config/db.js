@@ -19,6 +19,9 @@ const pool = mysql.createPool({
   queueLimit: 0,
 });
 
+const isProduction = process.env.NODE_ENV === 'production';
+const fallbackErrorCodes = ['ECONNREFUSED', 'ER_ACCESS_DENIED_ERROR', 'ER_BAD_DB_ERROR', 'ECONNRESET'];
+
 const demoUsers = sampleUsers.map((user) => ({
   ...user,
   is_active: user.is_active ? 1 : 0,
@@ -339,7 +342,7 @@ const queryWithFallback = async (sql, params = []) => {
   try {
     return await pool.query(sql, params);
   } catch (error) {
-    if (['ECONNREFUSED', 'ER_ACCESS_DENIED_ERROR', 'ER_BAD_DB_ERROR', 'ECONNRESET'].includes(error.code)) {
+    if (!isProduction && fallbackErrorCodes.includes(error.code)) {
       return fallbackQuery(sql, params);
     }
 
@@ -444,7 +447,7 @@ const db = {
     try {
       return await pool.query(sql, params);
     } catch (error) {
-      if (['ECONNREFUSED', 'ER_ACCESS_DENIED_ERROR', 'ER_BAD_DB_ERROR', 'ECONNRESET'].includes(error.code)) {
+      if (!isProduction && fallbackErrorCodes.includes(error.code)) {
         return [getDemoRows(sql, params)];
       }
 
@@ -455,7 +458,7 @@ const db = {
     try {
       return await pool.execute(sql, params);
     } catch (error) {
-      if (['ECONNREFUSED', 'ER_ACCESS_DENIED_ERROR', 'ER_BAD_DB_ERROR', 'ECONNRESET'].includes(error.code)) {
+      if (!isProduction && fallbackErrorCodes.includes(error.code)) {
         return [getDemoRows(sql, params)];
       }
 
@@ -466,7 +469,7 @@ const db = {
     try {
       return await pool.getConnection();
     } catch (error) {
-      if (['ECONNREFUSED', 'ER_ACCESS_DENIED_ERROR', 'ER_BAD_DB_ERROR', 'ECONNRESET'].includes(error.code)) {
+      if (!isProduction && fallbackErrorCodes.includes(error.code)) {
         return createDemoConnection();
       }
 

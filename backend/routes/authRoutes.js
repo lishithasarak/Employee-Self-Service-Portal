@@ -419,7 +419,7 @@ router.post('/forgot-password', async (req, res, next) => {
       message:
         'If an account exists with this email, a password reset link has been generated.',
       emailSent,
-      ...(process.env.NODE_ENV !== 'production' || !emailSent ? { resetUrl } : {}),
+      ...(process.env.NODE_ENV !== 'production' ? { resetUrl } : {}),
     });
   } catch (error) {
     next(error);

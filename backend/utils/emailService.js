@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const frontendBaseUrl = () => process.env.FRONTEND_URL || 'http://localhost:5173';
 
 const createTransporter = () => {
   const host = process.env.SMTP_HOST;
@@ -76,7 +77,7 @@ const sendLeaveApprovalEmail = async ({ to, name, leaveType, startDate, endDate,
           <p style="margin: 8px 0;"><strong>Total Days:</strong> ${totalDays}</p>
           ${!isApproved ? `<p style="margin: 8px 0; color: #dc2626;"><strong>Reason:</strong> ${reason}</p>` : ''}
         </div>
-        <p>You can check the status in your <a href="https://smartess.local/leaves" style="color: #2563eb;">Smart ESS Dashboard</a>.</p>
+        <p>You can check the status in your <a href="${frontendBaseUrl()}/leaves" style="color: #2563eb;">Smart ESS Dashboard</a>.</p>
       </div>
     `,
   });
@@ -111,7 +112,7 @@ const sendReimbursementApprovalEmail = async ({ to, name, category, amount, stat
           <p style="margin: 8px 0;"><strong>Amount:</strong> ₹${amount.toFixed(2)}</p>
           ${!isApproved ? `<p style="margin: 8px 0; color: #dc2626;"><strong>Comments:</strong> ${comments}</p>` : ''}
         </div>
-        <p>You can check the status in your <a href="https://smartess.local/reimbursements" style="color: #2563eb;">Smart ESS Dashboard</a>.</p>
+        <p>You can check the status in your <a href="${frontendBaseUrl()}/reimbursements" style="color: #2563eb;">Smart ESS Dashboard</a>.</p>
       </div>
     `,
   });

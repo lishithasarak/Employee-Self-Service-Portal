@@ -1,7 +1,7 @@
-# Employee Self-Service Portal - Deployment Ready ✅
+# Employee Self-Service Portal - Production Deployment Checklist
 
-## Project Status: COMPLETE
-This Employee Self-Service Portal is now **production-ready for demonstration** with all core functionality implemented and fully integrated.
+## Project Status
+The application is deployable after the manual external-account setup listed in [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md). Production mode requires MySQL, SMTP, S3, strong JWT credentials, and the configured frontend origin.
 
 ---
 
@@ -20,10 +20,10 @@ This Employee Self-Service Portal is now **production-ready for demonstration** 
 - **Runtime:** Node.js
 - **Framework:** Express.js 4.19.2
 - **Server:** localhost:5000
-- **Database:** MySQL (configured, using sample data for demo)
+- **Database:** MySQL (required in production; demo fallback is disabled there)
 - **Authentication:** JWT (jsonwebtoken 9.0.2)
 - **Security:** bcryptjs 2.4.3 (password hashing)
-- **CORS:** Enabled for localhost:5173 and 5174
+- **CORS:** Configured from `CORS_ORIGIN` in production
 
 ---
 

@@ -1,12 +1,6 @@
 const rateLimitStore = new Map();
 
 const getClientKey = (req) => {
-  const forwardedIps = req.headers['x-forwarded-for'];
-
-  if (typeof forwardedIps === 'string' && forwardedIps.trim()) {
-    return forwardedIps.split(',')[0].trim();
-  }
-
   return req.ip || 'unknown-client';
 };
 

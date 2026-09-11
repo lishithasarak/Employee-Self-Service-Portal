@@ -86,6 +86,6 @@ See [PWA_GUIDE.md](PWA_GUIDE.md) for detailed installation and offline usage ins
 ## Notes
 
 - Configure MySQL credentials in `backend/.env` before using the live database.
-- The app supports demo mode with fallback data when no database is configured.
-- PWA works offline with intelligent caching for API responses and uploaded files.
+- The app supports demo fallback data only outside production; production requires a reachable MySQL database.
+- The PWA precaches public application assets but does not cache authenticated API responses or private uploads.
 - All existing working features remain intact and properly secured.

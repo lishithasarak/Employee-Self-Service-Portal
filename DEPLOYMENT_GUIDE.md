@@ -41,17 +41,17 @@ SMTP_USER=
 SMTP_PASS=
 SMTP_FROM=Smart ESS <no-reply@example.com>
 
-STORAGE_PROVIDER=local
-AWS_REGION=
-AWS_ACCESS_KEY_ID=
-AWS_SECRET_ACCESS_KEY=
-AWS_S3_BUCKET=
+STORAGE_PROVIDER=s3
+AWS_REGION=your_aws_region
+AWS_ACCESS_KEY_ID=your_restricted_access_key
+AWS_SECRET_ACCESS_KEY=your_restricted_secret
+AWS_S3_BUCKET=your_private_bucket
 ```
 
 Notes:
 - Keep all secrets out of source control.
-- Use S3 only when the bucket and IAM credentials are ready.
-- Keep STORAGE_PROVIDER as local during local testing, or set it to s3 in production.
+- Production startup requires S3 and SMTP configuration.
+- Keep local storage available only for local development and testing.
 
 ### Frontend
 
@@ -137,7 +137,7 @@ Before enabling S3 in production:
 - Set STORAGE_PROVIDER=s3
 - Test document upload and signed download behavior
 - Confirm deleted or replaced files are removed properly
-- Keep the local storage mode for development if no S3 config is present
+- Keep the local storage mode for development only; production startup rejects it
 
 The app already contains the storage abstraction and authorization checks; the remaining work is environment configuration and bucket setup.
 
@@ -157,6 +157,8 @@ Before going live, verify:
 - CORS origin matches the frontend host
 - AWS S3 is configured for document storage if required
 - CI still passes after final env setup
+- Direct frontend routes work after refresh (Render SPA rewrite)
+- Password reset email delivery works with the configured SMTP account
 
 ---
 

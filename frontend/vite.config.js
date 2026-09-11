@@ -56,45 +56,7 @@ export default defineConfig({
         globPatterns: [
           '**/*.{js,css,html,ico,svg,woff,woff2,ttf,eot}'
         ],
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\//,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'smart-ess-https-cache',
-              expiration: {
-                maxEntries: 200,
-                maxAgeSeconds: 60 * 60 * 24 * 7 // 1 week
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          },
-          {
-            urlPattern: /\/api\//,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'smart-ess-api-cache',
-              networkTimeoutSeconds: 5,
-              expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 5 // 5 minutes for API responses
-              }
-            }
-          },
-          {
-            urlPattern: /\/uploads\//,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'smart-ess-uploads-cache',
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
-              }
-            }
-          }
-        ]
+        runtimeCaching: []
       },
       devOptions: {
         enabled: false

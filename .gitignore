@@ -5,3 +5,5 @@ backend/.env
 frontend/.env
 npm-debug.log*
 .DS_Store
+backend/uploads/
+frontend/dist/

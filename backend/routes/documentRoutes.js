@@ -157,7 +157,12 @@ router.get(
       }
 
       res.status(200).json({
-        document: documents[0]
+        document: {
+          ...documents[0],
+          file_url: documents[0].file_url
+            ? await storageService.getDownloadUrl(documents[0].file_url)
+            : null,
+        }
       });
     } catch (error) {
       next(error);
