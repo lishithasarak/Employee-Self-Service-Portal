@@ -130,6 +130,21 @@ test('department management remains restricted to administrators', async () => {
   }
 });
 
+test('department management accepts case variations of the administrator role', async () => {
+  const { server, port } = await startServer();
+
+  try {
+    const response = await fetch(
+      `http://localhost:${port}/api/departments`,
+      jsonRequest('POST', { name: '', code: '!' }, tokenFor(1, 'admin'))
+    );
+
+    assert.equal(response.status, 400);
+  } finally {
+    server.close();
+  }
+});
+
 test('department creation validates the name and code before changing data', async () => {
   const { server, port } = await startServer();
 

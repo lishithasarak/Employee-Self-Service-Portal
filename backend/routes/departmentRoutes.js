@@ -1,13 +1,24 @@
 const express = require('express');
 const db = require('../config/db');
-const { authenticate, authorize } = require('../middleware/authMiddleware');
+const { authenticate } = require('../middleware/authMiddleware');
 const { logAudit } = require('../utils/auditLogger');
 
 const router = express.Router();
 const normalizeCode = (value) => String(value || '').trim().toUpperCase();
 const isValidCode = (value) => /^[A-Z0-9_-]{2,50}$/.test(value);
+const authorizeDepartmentAdmin = (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Authentication required.' });
+  }
 
-router.use(authenticate, authorize('ADMIN'));
+  if (String(req.user.role || '').trim().toUpperCase() !== 'ADMIN') {
+    return res.status(403).json({ message: 'You do not have permission to access this resource.' });
+  }
+
+  next();
+};
+
+router.use(authenticate, authorizeDepartmentAdmin);
 
 router.get('/', async (req, res, next) => {
   try {
