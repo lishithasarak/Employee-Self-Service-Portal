@@ -4,7 +4,14 @@ const crypto = require('node:crypto');
 const { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 
-const provider = (process.env.STORAGE_PROVIDER || 'local').toLowerCase();
+const s3Configured = Boolean(
+  process.env.AWS_REGION
+  && process.env.AWS_ACCESS_KEY_ID
+  && process.env.AWS_SECRET_ACCESS_KEY
+  && process.env.AWS_S3_BUCKET
+);
+const requestedProvider = (process.env.STORAGE_PROVIDER || 'local').toLowerCase();
+const provider = requestedProvider === 's3' && s3Configured ? 's3' : 'local';
 const bucket = process.env.AWS_S3_BUCKET;
 const localRoot = path.join(__dirname, '..', 'uploads');
 const s3 = provider === 's3' ? new S3Client({ region: process.env.AWS_REGION, credentials: { accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY } }) : null;

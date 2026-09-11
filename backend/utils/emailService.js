@@ -3,8 +3,10 @@ const frontendBaseUrl = () => process.env.FRONTEND_URL || 'http://localhost:5173
 
 const createTransporter = () => {
   const host = process.env.SMTP_HOST;
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS;
 
-  if (!host) {
+  if (!host || !user || !pass) {
     return null;
   }
 
@@ -13,8 +15,8 @@ const createTransporter = () => {
     port: Number(process.env.SMTP_PORT || 587),
     secure: String(process.env.SMTP_SECURE || 'false').toLowerCase() === 'true' || Number(process.env.SMTP_PORT || 587) === 465,
     auth: {
-      user: process.env.SMTP_USER || '',
-      pass: process.env.SMTP_PASS || '',
+      user,
+      pass,
     },
   });
 };
@@ -28,12 +30,13 @@ const sendPasswordResetEmail = async ({ to, name, resetUrl }) => {
 
   const from = process.env.SMTP_FROM || 'Smart ESS <no-reply@smartess.local>';
 
-  await transporter.sendMail({
-    from,
-    to,
-    subject: 'Smart ESS Password Reset Request',
-    text: `Hi ${name},\n\nWe received a request to reset your Smart ESS password.\n\nUse this link to continue: ${resetUrl}\n\nThis link expires in 15 minutes.\n\nIf you did not request this, you can ignore this email.`,
-    html: `
+  try {
+    await transporter.sendMail({
+      from,
+      to,
+      subject: 'Smart ESS Password Reset Request',
+      text: `Hi ${name},\n\nWe received a request to reset your Smart ESS password.\n\nUse this link to continue: ${resetUrl}\n\nThis link expires in 15 minutes.\n\nIf you did not request this, you can ignore this email.`,
+      html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111827;">
         <h2 style="margin-bottom: 12px;">Smart ESS Password Reset</h2>
         <p>Hi ${name},</p>
@@ -43,7 +46,10 @@ const sendPasswordResetEmail = async ({ to, name, resetUrl }) => {
         <p>If you did not request this, you can safely ignore this email.</p>
       </div>
     `,
-  });
+    });
+  } catch (error) {
+    return false;
+  }
 
   return true;
 };
@@ -60,12 +66,13 @@ const sendLeaveApprovalEmail = async ({ to, name, leaveType, startDate, endDate,
   const statusColor = isApproved ? '#16a34a' : '#dc2626';
   const statusText = isApproved ? 'Approved' : 'Rejected';
 
-  await transporter.sendMail({
-    from,
-    to,
-    subject: `Leave Request ${statusText} - Smart ESS`,
-    text: `Hi ${name},\n\nYour leave request has been ${status.toLowerCase()}.\n\nLeave Type: ${leaveType}\nStart Date: ${startDate}\nEnd Date: ${endDate}\nTotal Days: ${totalDays}\n\n${!isApproved ? `Reason: ${reason}` : ''}\n\nYou can check the status in your Smart ESS dashboard.`,
-    html: `
+  try {
+    await transporter.sendMail({
+      from,
+      to,
+      subject: `Leave Request ${statusText} - Smart ESS`,
+      text: `Hi ${name},\n\nYour leave request has been ${status.toLowerCase()}.\n\nLeave Type: ${leaveType}\nStart Date: ${startDate}\nEnd Date: ${endDate}\nTotal Days: ${totalDays}\n\n${!isApproved ? `Reason: ${reason}` : ''}\n\nYou can check the status in your Smart ESS dashboard.`,
+      html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111827;">
         <h2 style="margin-bottom: 12px; color: ${statusColor};">Leave Request ${statusText}</h2>
         <p>Hi ${name},</p>
@@ -80,7 +87,10 @@ const sendLeaveApprovalEmail = async ({ to, name, leaveType, startDate, endDate,
         <p>You can check the status in your <a href="${frontendBaseUrl()}/leaves" style="color: #2563eb;">Smart ESS Dashboard</a>.</p>
       </div>
     `,
-  });
+    });
+  } catch (error) {
+    return false;
+  }
 
   return true;
 };
@@ -97,12 +107,13 @@ const sendReimbursementApprovalEmail = async ({ to, name, category, amount, stat
   const statusColor = isApproved ? '#16a34a' : '#dc2626';
   const statusText = isApproved ? 'Approved' : 'Rejected';
 
-  await transporter.sendMail({
-    from,
-    to,
-    subject: `Reimbursement Request ${statusText} - Smart ESS`,
-    text: `Hi ${name},\n\nYour reimbursement request has been ${status.toLowerCase()}.\n\nCategory: ${category}\nAmount: ₹${amount.toFixed(2)}\n\n${!isApproved ? `Comments: ${comments}` : ''}\n\nYou can check the status in your Smart ESS dashboard.`,
-    html: `
+  try {
+    await transporter.sendMail({
+      from,
+      to,
+      subject: `Reimbursement Request ${statusText} - Smart ESS`,
+      text: `Hi ${name},\n\nYour reimbursement request has been ${status.toLowerCase()}.\n\nCategory: ${category}\nAmount: ₹${amount.toFixed(2)}\n\n${!isApproved ? `Comments: ${comments}` : ''}\n\nYou can check the status in your Smart ESS dashboard.`,
+      html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111827;">
         <h2 style="margin-bottom: 12px; color: ${statusColor};">Reimbursement Request ${statusText}</h2>
         <p>Hi ${name},</p>
@@ -115,7 +126,10 @@ const sendReimbursementApprovalEmail = async ({ to, name, category, amount, stat
         <p>You can check the status in your <a href="${frontendBaseUrl()}/reimbursements" style="color: #2563eb;">Smart ESS Dashboard</a>.</p>
       </div>
     `,
-  });
+    });
+  } catch (error) {
+    return false;
+  }
 
   return true;
 };

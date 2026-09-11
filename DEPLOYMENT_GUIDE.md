@@ -41,17 +41,18 @@ SMTP_USER=
 SMTP_PASS=
 SMTP_FROM=Smart ESS <no-reply@example.com>
 
-STORAGE_PROVIDER=s3
-AWS_REGION=your_aws_region
-AWS_ACCESS_KEY_ID=your_restricted_access_key
-AWS_SECRET_ACCESS_KEY=your_restricted_secret
-AWS_S3_BUCKET=your_private_bucket
+# Optional. Leave local until AWS S3 is configured.
+STORAGE_PROVIDER=local
+AWS_REGION=
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_S3_BUCKET=
 ```
 
 Notes:
 - Keep all secrets out of source control.
-- Production startup requires S3 and SMTP configuration.
-- Keep local storage available only for local development and testing.
+- S3 and SMTP are optional. Production uses local storage and gracefully skips email delivery until those providers are configured.
+- Keep `STORAGE_PROVIDER=local` until all AWS variables are ready. Setting it to `s3` without complete AWS configuration still safely falls back to local storage.
 
 ### Frontend
 
@@ -134,10 +135,14 @@ Before enabling S3 in production:
 - Create a private S3 bucket
 - Configure IAM credentials with upload/download/delete permissions
 - Set AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_S3_BUCKET
-- Set STORAGE_PROVIDER=s3
+- Set STORAGE_PROVIDER=s3 only after all AWS variables are configured
 - Test document upload and signed download behavior
 - Confirm deleted or replaced files are removed properly
-- Keep the local storage mode for development only; production startup rejects it
+- Keep the local storage mode until S3 is configured; it remains supported in production as a fallback
+
+S3 is optional. When it is not configured, uploads use the existing local filesystem storage. Render local disk is ephemeral, so configure S3 before relying on uploaded files across redeploys.
+
+SMTP is optional. When it is not configured or delivery fails, email-dependent operations report that email was not sent without exposing reset tokens or SMTP details. Configure `SMTP_HOST`, `SMTP_USER`, `SMTP_PASS`, and optionally `SMTP_FROM` later to enable delivery.
 
 The app already contains the storage abstraction and authorization checks; the remaining work is environment configuration and bucket setup.
 
